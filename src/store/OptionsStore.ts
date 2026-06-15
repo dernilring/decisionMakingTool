@@ -68,5 +68,6 @@ export class OptionsStore {
   }
   clear(): void {
     this.options = [];
+    this.saveToStorage()
   }
 }
