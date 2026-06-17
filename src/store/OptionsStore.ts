@@ -1,4 +1,4 @@
-import type { Option } from '../types/option';
+import type { Option } from '../types/Option';
 
 export class OptionsStore {
   private options: Option[] = [];
