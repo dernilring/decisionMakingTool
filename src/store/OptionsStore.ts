@@ -40,11 +40,12 @@ export class OptionsStore {
   getAll(): Option[] {
     return this.options;
   }
-  addOption(optionData: Omit<Option, 'id'>): void {
+  addOption(optionData: Omit<Option, 'id'>): Option {
     let newId = this.generateId();
     let newOption = { id: newId, title: optionData.title, weight: optionData.weight };
     this.options.push(newOption);
     this.saveToStorage();
+    return newOption
   }
   update(id: string, updates: Partial<Option>): void {
     const option = this.options.find((op) => op.id === id);

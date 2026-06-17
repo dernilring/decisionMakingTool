@@ -1,10 +1,18 @@
 import { OptionsStore } from '../store/OptionsStore';
 import type { Option } from '../types/Option';
+import { renderListContainer } from '../components/Options-list';
+import { createButton } from '../components/Action-panel';
+import { createInputs, createOptionRow } from '../components/Option-row';
+import { createListContainer } from '../components/Options-list';
 
 export function renderHomePage(container: HTMLElement): void {
   container.replaceChildren();
 
   const store = OptionsStore.getInstance();
+  const rowsMap = new Map<
+    string,
+    { row: HTMLDivElement; titleInput: HTMLInputElement; weightInput: HTMLInputElement }
+  >();
 
   const title = document.createElement('h1');
   title.textContent = 'Decision Making Tool';
@@ -25,103 +33,63 @@ export function renderHomePage(container: HTMLElement): void {
     listContainer,
   );
 
-  const refreshList = () => {
-    const handleUpdate = (id: string, updates: Partial<Option>) => {
-      store.update(id, updates);
-      refreshList();
-    };
-
-    const handleDelete = (id: string) => {
-      store.delete(id);
-      refreshList();
-    };
-
-    renderListContainer(container, store, handleUpdate, handleDelete)
+  const handleUpdate = (id: string, updates: Partial<Option>) => {
+    const entry = rowsMap.get(id);
+    if (!entry) {
+      return;
+    }
+    store.update(id, updates);
+    if (updates.title !== undefined && updates.weight !== undefined) {
+      entry.titleInput.value = updates.title;
+      entry.weightInput.value = String(updates.weight);
+    }
   };
 
-
-}
-export function renderListContainer(
-  container: HTMLElement,
-  store: OptionsStore,
-  OnUpdate: (id: string, updates: Partial<Option>) => void,
-  OnDelete: (id: string) => void,
-) {
-  container.replaceChildren();
-  const options = store.getAll();
-
-  for (const opt of options) {
-    const row = createOptionRow(opt, OnUpdate, OnDelete);
-    container.appendChild(row);
-  }
-}
-
-export function createListContainer(): HTMLDivElement {
-  const container = document.createElement('div');
-  container.className = 'options-list';
-  return container;
-}
-
-export function createInputs() {
-  const optionTitle = document.createElement('input');
-  optionTitle.type = 'text';
-  optionTitle.name = 'title';
-  const optionWeight = document.createElement('input');
-  optionWeight.type = 'number';
-  optionWeight.name = 'weight';
-  return { optionTitle, optionWeight };
-}
-
-export function createButton(text: string): HTMLElement {
-  const button = document.createElement('button');
-  button.textContent = text;
-  return button;
-}
-
-export function createOptionRow(
-  option: Option,
-  OnUpdate: (id: string, updates: Partial<Option>) => void,
-  OnDelete: (id: string) => void,
-): HTMLDivElement {
-  const row = document.createElement('div');
-  row.className = 'option-row';
-
-  const idSpan = document.createElement('span');
-  idSpan.textContent = option.id;
-
-  const titleInp = document.createElement('input');
-  titleInp.textContent = option.title;
-  titleInp.placeholder = 'title...'
-
-  const weightInp = document.createElement('input');
-  weightInp.type = 'number';
-  weightInp.min = '1';
-  weightInp.placeholder = '1'
-  weightInp.value = String(option.weight);
-
-  titleInp.addEventListener('input', () => {
-    OnUpdate(option.id, { title: titleInp.value });
-  });
-  weightInp.addEventListener('input', () => {
-    const enteredValue = Number(weightInp.value);
-    if (!isNaN(enteredValue) && enteredValue > 0) {
-      OnUpdate(option.id, { weight: Number(weightInp.value) });
+  const handleDelete = (id: string) => {
+    const entry = rowsMap.get(id);
+    if (!entry) {
+      return;
     }
-  });
-  const clearButton = document.createElement('button');
-  clearButton.textContent = 'clear';
-  clearButton.addEventListener('click', () => {
-    OnDelete(option.id);
-  });
-  row.append(idSpan, titleInp, weightInp, clearButton);
-  return row;
-}
+    entry.row.remove();
+    rowsMap.delete(id);
+    store.delete(id);
+  };
+  const handleCreateNewOption = (option: Option) => {
+    const row = createOptionRow(option, handleUpdate, handleDelete);
+    const titleInput = row.querySelector('input[type="text"]') as HTMLInputElement;
+    const weightInput = row.querySelector('input[type="number"]') as HTMLInputElement;
+    rowsMap.set(option.id, { row, titleInput, weightInput });
+    listContainer.appendChild(row);
+  };
 
-export function handleButtonClick(button: HTMLElement): void {
-  //const valTitle = document.search.title
-  button.addEventListener('click', (e: MouseEvent) => {
-    e.preventDefault();
-    // const data = optionTitle.value
-    console.log('click');
+  const initList = () => {
+    listContainer.replaceChildren();
+    rowsMap.clear();
+
+    const options = store.getAll();
+    for (let option of options) {
+      handleCreateNewOption(option);
+    }
+  };
+
+  addBtn.addEventListener('click', () => {
+    const title = inputs.optionTitle.value.trim();
+    const weight = Number(inputs.optionWeight.value);
+
+    const newOption = store.addOption({ title, weight });
+    handleCreateNewOption(newOption);
+    inputs.optionTitle.value = '';
+    inputs.optionWeight.value = '';
   });
+
+  clearBtn.addEventListener('click', ()=>{
+    store.clear()
+    listContainer.replaceChildren()
+    rowsMap.clear()
+
+  })
+  pickerBtn.addEventListener('click', () =>{
+    console.log('in progress...')
+  })
+  initList();
 }
