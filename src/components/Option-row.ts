@@ -30,7 +30,6 @@ export function createOptionRow(
   const weightInp = document.createElement('input');
   weightInp.type = 'number';
   weightInp.min = '1';
-  weightInp.placeholder = '1'
   weightInp.value = String(option.weight);
 
   titleInp.addEventListener('input', () => {
@@ -48,6 +47,6 @@ export function createOptionRow(
     OnDelete(option.id);
     console.log('delete')
   });
-  row.append(idSpan, titleInp, weightInp, clearButton);
+  row.append(titleInp, weightInp, clearButton);
   return row;
 }

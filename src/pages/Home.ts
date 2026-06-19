@@ -1,9 +1,9 @@
 import { OptionsStore } from '../store/OptionsStore';
 import type { Option } from '../types/Option';
-import { renderListContainer } from '../components/Options-list';
 import { createButton } from '../components/Action-panel';
 import { createInputs, createOptionRow } from '../components/Option-row';
 import { createListContainer } from '../components/Options-list';
+import { router } from '../router/router';
 
 export function renderHomePage(container: HTMLElement): void {
   container.replaceChildren();
@@ -25,8 +25,6 @@ export function renderHomePage(container: HTMLElement): void {
 
   container.append(
     title,
-    inputs.optionTitle,
-    inputs.optionWeight,
     addBtn,
     clearBtn,
     pickerBtn,
@@ -54,6 +52,7 @@ export function renderHomePage(container: HTMLElement): void {
     rowsMap.delete(id);
     store.delete(id);
   };
+
   const handleCreateNewOption = (option: Option) => {
     const row = createOptionRow(option, handleUpdate, handleDelete);
     const titleInput = row.querySelector('input[type="text"]') as HTMLInputElement;
@@ -89,7 +88,7 @@ export function renderHomePage(container: HTMLElement): void {
 
   })
   pickerBtn.addEventListener('click', () =>{
-    console.log('in progress...')
+    router.navigate('wheel')
   })
   initList();
 }

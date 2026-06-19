@@ -1,5 +1,6 @@
+import { renderPage } from '../router/renderPage';
+import { router } from '../router/router';
 import { createElement } from '../utils/create-element';
-import { renderHomePage } from '../pages/Home';
 
 export function initApp(): void {
   const root = createElement({
@@ -8,5 +9,6 @@ export function initApp(): void {
   });
 
   document.body.append(root);
-  renderHomePage(root)
+  router.subscribe(renderPage)
+  router.init(root)
 }
