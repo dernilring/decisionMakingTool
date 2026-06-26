@@ -22,7 +22,7 @@ class Router {
       case 'error':
         return 'error';
       default:
-        return 'home';
+        return 'error';
     }
   }
 

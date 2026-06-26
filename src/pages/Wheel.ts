@@ -1,5 +1,6 @@
-import { createButton } from '../components/Action-panel';
+import { createButton } from '../components/Button';
 import { createCanvasWrapper } from '../components/CanvasWrapper';
+import { router } from '../router/router';
 
 export function renderWheelPage(container: HTMLElement): void {
   container.replaceChildren();
@@ -14,6 +15,10 @@ export function renderWheelPage(container: HTMLElement): void {
 
   const startBtn = createButton('Start');
   startBtn.style.margin = '10px';
+  const backBtn = createButton('back');
+  backBtn.addEventListener('click', () => {
+    router.navigate('home');
+  });
 
   let durationTime = 0;
   let startAngle = 0;
@@ -21,7 +26,7 @@ export function renderWheelPage(container: HTMLElement): void {
   let startTime = 0;
   let animationId: number | null = null;
 
-    startBtn.addEventListener('click', () => {
+  startBtn.addEventListener('click', () => {
     startSpin();
   });
 
@@ -60,8 +65,5 @@ export function renderWheelPage(container: HTMLElement): void {
     }
   }
   startBtn.addEventListener('click', startSpin);
-  container.append(wrapper);
-  container.append(startBtn);
-  container.append(duration);
+  container.append(backBtn, startBtn, duration, wrapper);
 }
-

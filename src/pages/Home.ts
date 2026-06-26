@@ -1,6 +1,6 @@
 import { OptionsStore } from '../store/OptionsStore';
 import type { Option } from '../types/Option';
-import { createButton } from '../components/Action-panel';
+import { createButton } from '../components/Button';
 import { createInputs, createOptionRow } from '../components/Option-row';
 import { createListContainer } from '../components/Options-list';
 import { router } from '../router/router';
