@@ -1,11 +1,15 @@
 import { OptionsStore } from '../store/OptionsStore';
+import type { Option } from '../types/Option';
 
-export function drawCircle(): HTMLCanvasElement {
+export function drawCircle(): {
+  canvas : HTMLCanvasElement,
+  sectors : { option : Option, startAngle : number , sectorAngle : number }[]
+} {
   const store = OptionsStore.getInstance();
 
   const options = store.getAll();
   const optionsCount = options.length;
-
+const sectors : { option : Option, startAngle : number , sectorAngle : number }[] = []
   if (optionsCount < 2) throw new Error('options count can not be less then 2');
 
   const canvas = document.createElement('canvas');
@@ -35,6 +39,7 @@ export function drawCircle(): HTMLCanvasElement {
 
   options.forEach((opt) => {
     const sectorAngle = (opt.weight / totalWeight) * 2 * Math.PI;
+    sectors.push({option : opt, startAngle, sectorAngle} )
     const avgAngle = sectorAngle / 2 + startAngle;
 
     const r = Math.floor(Math.random() * 256);
@@ -59,5 +64,5 @@ export function drawCircle(): HTMLCanvasElement {
     startAngle += sectorAngle;
   });
 
-  return canvas;
+  return { canvas, sectors};
 }

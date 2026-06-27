@@ -1,10 +1,15 @@
 import { createButton } from '../components/Button';
 import { createCanvasWrapper } from '../components/CanvasWrapper';
 import { router } from '../router/router';
+import { OptionsStore } from '../store/OptionsStore';
+import type { Option } from '../types/Option';
 
 export function renderWheelPage(container: HTMLElement): void {
   container.replaceChildren();
-  const { wrapper, wheelCanvas } = createCanvasWrapper();
+  const store = OptionsStore.getInstance();
+
+  const options = store.getAll();
+  const { wrapper, wheelCanvas, sectors } = createCanvasWrapper(options);
   const wheel = wheelCanvas;
 
   const duration = document.createElement('input');
@@ -26,6 +31,9 @@ export function renderWheelPage(container: HTMLElement): void {
   let startTime = 0;
   let animationId: number | null = null;
 
+
+  const resultDiv = document.createElement('div');
+
   startBtn.addEventListener('click', () => {
     startSpin();
   });
@@ -36,11 +44,16 @@ export function renderWheelPage(container: HTMLElement): void {
 
   function onSpinComplete(finalAngle: number): void {
     //todo : sound , animation
+    const selected = getSelectedOption(finalAngle, sectors);
     console.log('Spin complete! Final angle:', finalAngle);
+    if (selected) {
+      console.log('result ', selected.title);
+      resultDiv.textContent = selected.title;
+    }
+    wheel;
   }
   function startSpin() {
     durationTime = Number(duration.value) * 1000;
-
     startAngle = 0;
     targetAngle = startAngle + 5 * 2 * Math.PI + Math.random() * 2 * Math.PI;
     startTime = performance.now();
@@ -64,6 +77,24 @@ export function renderWheelPage(container: HTMLElement): void {
       onSpinComplete(currentAngle);
     }
   }
+  function getSelectedOption(
+    currentAngle: number,
+    sectors: { option: Option; startAngle: number; sectorAngle: number }[],
+  ): Option | null {
+    const pointerAngle = -Math.PI / 2;
+    let current = (pointerAngle - currentAngle) % (2 * Math.PI);
+    if (current < 0) {
+      current += 2 * Math.PI;
+    }
+    let accum = 0;
+    for (const sector of sectors) {
+      accum += sector.sectorAngle;
+      if (current <= accum) {
+        return sector.option;
+      }
+    }
+    return sectors[sectors.length - 1]?.option ?? null;
+  }
   startBtn.addEventListener('click', startSpin);
-  container.append(backBtn, startBtn, duration, wrapper);
+  container.append(backBtn, startBtn, duration, resultDiv, wrapper);
 }

@@ -1,12 +1,15 @@
 import { drawArrow } from '../components/Arrow';
 import { drawCircle } from '../components/Canvas';
+import type { Option } from '../types/Option';
 
-export function createCanvasWrapper(): {
+export function createCanvasWrapper(options : Option[]): {
   wrapper: HTMLDivElement;
   wheelCanvas: HTMLCanvasElement;
   arrowCanvas: HTMLCanvasElement;
+  sectors : { option : Option, startAngle : number , sectorAngle : number }[]
 } {
-  const wheelCanvas = drawCircle();
+
+  const{canvas: wheelCanvas, sectors } = drawCircle();
   const arrowCanvas = drawArrow();
 
   const wrapper = document.createElement('div');
@@ -32,5 +35,5 @@ export function createCanvasWrapper(): {
   wrapper.appendChild(wheelCanvas);
   wrapper.appendChild(arrowCanvas);
 
-  return { wrapper, wheelCanvas, arrowCanvas };
+  return { wrapper, wheelCanvas, arrowCanvas, sectors };
 }
