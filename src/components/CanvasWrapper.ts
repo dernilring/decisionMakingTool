@@ -13,10 +13,7 @@ export function createCanvasWrapper(options : Option[]): {
   const arrowCanvas = drawArrow();
 
   const wrapper = document.createElement('div');
-  wrapper.style.position = 'relative';
-  wrapper.style.width = '600px';
-  wrapper.style.height = '600px';
-  wrapper.style.margin = '0 auto';
+  wrapper.className = 'canvas-wrapper'
 
   const positionCanvas = (canvas: HTMLCanvasElement) => {
     canvas.style.position = 'absolute';

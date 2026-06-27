@@ -33,6 +33,7 @@ export function renderWheelPage(container: HTMLElement): void {
 
 
   const resultDiv = document.createElement('div');
+  resultDiv.className = 'picked-option'
 
   startBtn.addEventListener('click', () => {
     startSpin();

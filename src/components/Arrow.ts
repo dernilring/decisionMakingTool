@@ -2,6 +2,7 @@ export function drawArrow(): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   canvas.id = 'canvas-arrow';
+  canvas.className = 'arrow-canvas'
   if (!ctx) throw new Error('canvas is not created');
   canvas.width = 600;
   canvas.height = 600;

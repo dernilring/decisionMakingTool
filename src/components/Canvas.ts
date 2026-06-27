@@ -2,18 +2,19 @@ import { OptionsStore } from '../store/OptionsStore';
 import type { Option } from '../types/Option';
 
 export function drawCircle(): {
-  canvas : HTMLCanvasElement,
-  sectors : { option : Option, startAngle : number , sectorAngle : number }[]
+  canvas: HTMLCanvasElement;
+  sectors: { option: Option; startAngle: number; sectorAngle: number }[];
 } {
   const store = OptionsStore.getInstance();
 
   const options = store.getAll();
   const optionsCount = options.length;
-const sectors : { option : Option, startAngle : number , sectorAngle : number }[] = []
+  const sectors: { option: Option; startAngle: number; sectorAngle: number }[] = [];
   if (optionsCount < 2) throw new Error('options count can not be less then 2');
 
   const canvas = document.createElement('canvas');
   canvas.id = 'canvas';
+  canvas.className = 'wheel-canvas'
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('canvas is not created');
   canvas.width = 600;
@@ -39,7 +40,7 @@ const sectors : { option : Option, startAngle : number , sectorAngle : number }[
 
   options.forEach((opt) => {
     const sectorAngle = (opt.weight / totalWeight) * 2 * Math.PI;
-    sectors.push({option : opt, startAngle, sectorAngle} )
+    sectors.push({ option: opt, startAngle, sectorAngle });
     const avgAngle = sectorAngle / 2 + startAngle;
 
     const r = Math.floor(Math.random() * 256);
@@ -64,5 +65,5 @@ const sectors : { option : Option, startAngle : number , sectorAngle : number }[
     startAngle += sectorAngle;
   });
 
-  return { canvas, sectors};
+  return { canvas, sectors };
 }
