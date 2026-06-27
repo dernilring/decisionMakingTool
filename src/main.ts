@@ -1,4 +1,6 @@
 import './styles/global.css';
-import { initApp } from './app';
+import { initApp } from './app/app';
+
 
 initApp();
+
